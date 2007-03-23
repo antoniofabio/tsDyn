@@ -7,17 +7,17 @@ Logistic Smooth Transition AutoRegressive model.
 }
 \synopsis{
 lstar(x, m, d=1, steps=d, series, mL, mH, mTh, thDelay, 
-          thVar, th, gamma, trace=TRUE, control=list()) 
+			thVar, th, phi1, phi2, gamma, trace=TRUE, control=list())
 }
 \usage{
 lstar(x, m, d=1, steps=d, series, mL, mH, thDelay, 
-          th, gamma, trace=TRUE, control=list())
+			th, phi1, phi2, gamma, trace=TRUE, control=list())
 
 lstar(series, m, d, steps, mL, mH, mTh,
-    th, gamma, trace=TRUE, control=list())
+    phi1, phi2, th, gamma, trace=TRUE, control=list())
 
 lstar(series, m, d, steps, mL=m, mH=m, thVar,
-    th, gamma, trace=TRUE, control=list())
+    phi1, phi2, th, gamma, trace=TRUE, control=list())
 }
 \value{
   An object of class \code{nlar}, subclass \code{lstar}, i.e. a list
@@ -44,7 +44,8 @@ lstar(series, m, d, steps, mL=m, mH=m, thVar,
 \item{mTh}{coefficients for the lagged time series, to obtain the
   threshold variable}
 \item{thVar}{external threshold variable}
-\item{th, gamma}{starting values for coefficients in the LSTAR model. If missing, a grid search is performed}
+\item{phi1, phi2, th, gamma}{starting values for coefficients in the
+  LSTAR model. If missing, SETAR estimations are used}
 \item{trace}{should additional infos be printed? (logical)}
 \item{control}{further arguments to be passed as \code{control} list to
   \code{\link{optim}}}
@@ -59,37 +60,28 @@ lstar(series, m, d, steps, mL=m, mH=m, thVar,
   + ( phi2[0] + phi2[1] x[t] + phi2[2] x[t-d] + \dots + phi2[mH] x[t -
   (mH-1)d] ) (1 - G( z[t], th, gamma ) ) + eps[t+steps]
   }
-with \var{z} the treshold variable, and \eqn{G} the logistic function,
-computed as \code{plogis(q, location = th, scale = 1/gamma)}, so see
-\code{\link{plogis}} documentation for details on the logistic function
-formulation and parameters meanings.  
+with \var{z} the treshold variable, and \eqn{G} the logistic function, computed as \code{plogis(q, location = th, scale = 1/gamma)}, so see \code{\link{plogis}} documentation for details on the logistic function formulation and parameters meanings. 
 The threshold variable can alternatively be specified by:
 \describe{
-\item{mTh}{ \eqn{z[t] = x[t] mTh[1] + x[t-d] mTh[2] + \dots +
-    x[t-(m-1)d] mTh[m]} } 
+\item{mTh}{ \eqn{z[t] = x[t] mTh[1] + x[t-d] mTh[2] + \dots + x[t-(m-1)d] mTh[m]} }
 \item{thDelay}{ \eqn{z[t] = x[t - thDelay*d ]} }
 \item{thVar}{ \eqn{z[t] = thVar[t]} }
 }
 
-Note that if starting values for phi1 and phi2 are provided, isn't
-necessary to specify mL and mH. Further, the user has to specify only
-one parameter between mTh, thDelay and thVar for indicating the
-threshold variable. 
+Note that if starting values for phi1 and phi2 are provided, isn't necessary to specify mL and mH. Further, the user has to specify only one parameter between mTh, thDelay and thVar for indicating the threshold variable.
 
-Estimation is done by analytically determining \var{phi1} and \var{phi2}
-(through linear regression) and then minimizing residuals sum of squares
-with respect to \var{th} and \var{gamma}. These two steps are repeated
-until convergence is achieved. For the nonlinear estimation of the
-parameters \var{th} and \var{gamma}, the program uses the
-\code{\link{optim}} function, with its default optimization method. You 
+Estimation is done by minimizing residuals sum of squares with respect
+to \var{phi1}, \var{phi2}, \var{th} and \var{gamma}, using the
+\code{\link{optim}} function, with its default optimization method. You
 can pass further arguments directly to the 'control' list argument of
 this function. For example, the option \code{maxit} maybe useful when
 there are convergence issues (see examples).
-}
 
+Note that \code{lstar} is only a convenience wrapper to nlar (for not
+having to specify \code{m}, which can be deduced from the other parameters).
+}
 \seealso{
-\code{\link{plot.lstar}} for details on plots produced for this model
-from the \code{plot} generic. 
+\code{\link{plot.lstar}} for details on plots produced for this model from the \code{plot} generic.
 }
 \author{ Antonio, Fabio Di Narzo }
 \examples{
@@ -99,9 +91,7 @@ mod.lstar
 }
 \keyword{ ts }
 \references{
-Non-linear time series models in empirical finance, Philip Hans Franses
-and Dick van Dijk, Cambridge: Cambridge University Press (2000). 
+Non-linear time series models in empirical finance, Philip Hans Franses and Dick van Dijk, Cambridge: Cambridge University Press (2000).
 
-Non-Linear Time Series: A Dynamical Systems Approach, Tong, H., Oxford:
-Oxford University Press (1990). 
+Non-Linear Time Series: A Dynamical Systems Approach, Tong, H., Oxford: Oxford University Press (1990).
 }
