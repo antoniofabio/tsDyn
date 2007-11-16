@@ -1,5 +1,4 @@
--version 0.5-5 released
--fixed bug in lstar model out-of-sample forecasting
+-added google codebase project URL to DESCRIPTION
 
 -version 0.5-4 released
 -fixed some warnings issued in R-2.4.0 check script
