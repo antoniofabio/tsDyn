@@ -1,3 +1,9 @@
+-version 0.6 released
+-fixed Matrix dependency in DESCRIPTION
+-added minimal docs for newly created internal objects
+-added a new STAR-fitting function with automatic selection of the number of regimes
+-fixed bugs in lstar
+-fixed bugs in some internal functions
 -added google codebase project URL to DESCRIPTION
 
 -version 0.5-4 released
