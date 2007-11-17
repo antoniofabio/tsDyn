@@ -541,7 +541,7 @@ star <- function(x, m=2, noRegimes, d = 1, steps = d, series, rob = FALSE,
   n.used <- NROW(xx)
 
   if(missing(noRegimes))
-     noRegimes <- Inf;     
+     noRegimes <- Inf;
     
   if(!missing(thDelay)) {
     
@@ -567,17 +567,12 @@ star <- function(x, m=2, noRegimes, d = 1, steps = d, series, rob = FALSE,
       if(trace) cat("Using only first", nrow(xx), "elements of thVar\n")
 
     }
-    else 
-
+    else
       z <- thVar
-
     externThVar <- TRUE
-
   } else {
-
     if(trace) cat("Using default threshold variable: thDelay=0\n")
     z <- xx[,1]
-
   }
   
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -996,4 +991,46 @@ print.star <- function(x, ...) {
     cat("\n")
   }
   invisible(x)
+}
+
+showDialog.star <- function(x, ...) {
+  vD <- tclVar(1)
+  vSteps <- tclVar(1)
+  vML  <- tclVar(1)
+  vMH  <- tclVar(1)
+  vThDelay <- tclVar(0)
+  vTh <- tclVar(0)
+  frTop <- Frame(opts=list(side="left"))
+  frLeft <- Frame()
+  add(frLeft,
+    namedSpinbox("low reg. AR order", vML, from=1, to=1000, increment=1, width=4),
+    namedSpinbox("high reg. AR order", vMH, from=1, to=1000, increment=1, width=4)
+  )
+  frRight <- Frame()
+  add(frRight,
+    namedSpinbox("treshold delay", vThDelay, from=0, to=1000)
+  )
+  frExtra <- Frame()
+  add(frExtra,
+          namedSpinbox("time delay", vD, from=1, to=1000),
+          namedSpinbox("forecasting steps", vSteps, from=1, to=1000)
+  )
+  add(frTop, frExtra, frLeft, frRight)
+  frRoot <- Frame()	
+
+  onFinish <- function() {
+    d <- as.numeric(tclObj(vD))
+    steps <- as.numeric(tclObj(vSteps))
+    mL <- as.numeric(tclObj(vML))
+    mH <- as.numeric(tclObj(vMH))
+    thDelay <- as.numeric(tclObj(vThDelay))
+    tkdestroy(frRoot$tkvar)
+    res <- star(x, d=d, steps=steps, mL=mL, mH=mH, thDelay=thDelay)
+    assign("nlarModel", res, .GlobalEnv)
+  }
+  onCancel <- function()
+    tkdestroy(frRoot$tkvar)
+  bttnFrame <- makeButtonsFrame(list(Finish=onFinish, Cancel=onCancel))
+  add(frRoot, frTop, bttnFrame)
+  buildDialog(title="STAR model", frRoot)
 }
