@@ -1,12 +1,11 @@
 \name{addRegime}
 \alias{addRegime}
-\alias{addRegime.star}
 \title{addRegime test}
 \description{
 addRegime test
 }
 \usage{
-addRegime(object, ...)
+addRegime(object)
 \method{addRegime}{star}(object, G, rob=FALSE, sig=0.05, trace = TRUE, ...)
 }
 \arguments{
