@@ -469,11 +469,11 @@ showDialog.lstar <- function(x, ...) {
   onFinish <- function() {
     mL <- as.numeric(tclObj(vML))
     mH <- as.numeric(tclObj(vMH))
-    c <- as.numeric(tclObj(vTh))
+    th <- as.numeric(tclObj(vTh))
     thDelay <- as.numeric(tclObj(vThDelay))
     maxit <- as.numeric(tclObj(vMaxit))
     tkdestroy(frRoot$tkvar)
-    res <- lstar(x, mL=mL, mH=mH, c=c, thDelay=thDelay, control=list(maxit=maxit))
+    res <- lstar(x, mL=mL, mH=mH, th=th, thDelay=thDelay, control=list(maxit=maxit))
     assign("nlarModel", res, .GlobalEnv)
   }
   onCancel <- function()

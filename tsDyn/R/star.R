@@ -447,7 +447,6 @@ estimateParams <- function(object, trace=TRUE, control=list(), ...)
 #   sig
 linearityTest.star <- function(object, rob=FALSE, sig=0.05, trace=TRUE,...)
 {
-
   str <- object$str
   n.used <- NROW(str$xx);  # The number of lagged samples
 
