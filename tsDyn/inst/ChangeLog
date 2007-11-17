@@ -1,6 +1,7 @@
 -version 0.6 released
 -fixed Matrix dependency in DESCRIPTION
 -added minimal docs for newly created internal objects
+-added STAR model option to the tcltk GUI
 -added a new STAR-fitting function with automatic selection of the number of regimes
 -fixed bugs in lstar
 -fixed bugs in some internal functions
