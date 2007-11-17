@@ -980,13 +980,14 @@ print.star <- function(x, ...) {
   NextMethod(...)
   cat("\nMultiple regime STAR model\n\n")
   x <- x$model.specific
+  dg <- options()$digits
   for (i in 1:x$noRegimes) {
     cat("Regime ", i, ":\n")
     cat("    Linear parameters: ")
-    cat(paste(x$phi1[i,], collapse=", "), '\n')
+    cat(paste(round(x$phi1[i,],dg), collapse=", "), '\n')
     if(i > 1) {
       cat("    Non-linear parameters:\n")
-      cat(paste(x$phi2[i-1,], collapse=", "))
+      cat(paste(round(x$phi2[i-1,],dg), collapse=", "))
     }
     cat("\n")
   }
