@@ -112,7 +112,7 @@ oneStep.tarch <- function(object, newdata, ...) {
   xx <- cbind(1, newdata^2)
   isL <- thVal<=0
   if(length(isL) == 1)
-    return( sqrt(xx %*% coef[ ifelse(isL,LInd,Hind) ] ) )
+    return( sqrt(xx %*% coef[ ifelse(isL,LInd,HInd) ] ) )
   res <- rep(NA, length(isL))
   res[isL] <- xx[isL,] %*% coef[LInd]
   res[!isL] <- xx[!isL,] %*% coef[HInd]
