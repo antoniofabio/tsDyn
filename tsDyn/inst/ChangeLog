@@ -1,3 +1,6 @@
+-version 0.6-1
+-fixed bug in llar.predict (spotted by Markus Gross)
+
 -version 0.6-0 released
 -fixed Matrix dependency in DESCRIPTION
 -added minimal docs for newly created internal objects
