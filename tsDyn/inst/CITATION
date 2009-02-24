@@ -1,9 +1,17 @@
-cat("Antonio, Fabio Di Narzo and Josè Luis Aznarte (2007). tsDyn: Time series analysis based on dynamical systems theory. R package version 0.7.
-A BibTeX entry for LaTeX users is
-
-  @Manual{,
-    title = {tsDyn: Time series analysis based on dynamical systems theory},
-    author = {{Antonio, Fabio Di Narzo, Jos\\`{e} Luis Aznarte}},
-    year = {2007},
-    note = {R package version 0.6},
-  }")
+citHeader("To cite package 'nlme' in publications use:")
+     
+desc <- packageDescription("nlme")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
+vers <- paste("R package version", desc$Version)
+     
+citEntry(entry="Manual",
+	title = "tsDyn: Time series analysis based on dynamical systems theory",
+	author = personList(as.person("Antonio, Fabio Di Narzo"),
+                                  as.person("Jose' Luis Aznarte"),
+                                  as.person("Matthieu Stigler")),
+        year = year,
+        note = vers,
+	textVersion = paste("Antonio, Fabio Di Narzo, Jose' Luis Aznarte and Matthieu Stigler (",
+                    year,
+                    "). tsDyn: Time series analysis based on dynamical systems theory. ",
+                    vers, ".", sep=""))
