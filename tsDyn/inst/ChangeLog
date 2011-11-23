@@ -1,3 +1,21 @@
+Version 0.7-61
+-TVECM: allow for K>2 variables when the cointegrating vector is pre-specified
+-TVECM summary: change output, adding newlines after coint vector and percentage of observations
+
+Version 0.7-6
+-correct bug in star (bugreport by Petri H) by Christoph B
+-change return value of star() in case of no star regime detected: returns linear object instead of series itself
+
+Version 0.7-52
+-add tests for lstar
+-correct lstar so that optim function re-evaluate each time linear parameters
+-remove VECM.Rout as useless
+
+Version 0.7-51
+-update NAMESPACE as previous (0.7-50) did not work
+-add VECM.Rout
+-add econometrica .bst and amsplain.bst
+
 Version 0.7-50
 -remove own BIC function and use that of pkg nlme, as recommend by Prof Ripley
 -fix bug in Rd files, and description (missing suggest packages)

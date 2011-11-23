@@ -110,20 +110,14 @@ lstar <- function(x, m, d=1, steps=d, series, mL, mH, mTh, thDelay,
       for(newTh in seq(minTh, maxTh, rateTh)) {
         
         # We fix the linear parameters.
-        tmp <- lm.fit(cbind(xxL, xxH * G(z, newGamma, newTh)), yy)$coefficients
-        new_phi1 <- tmp[1:(mL+1)]
-        new_phi2 <- tmp[(mL+2):(mL+mH+2)]
-
-        # Get the sum of squares
-        y.hat <- F(new_phi1, new_phi2, newGamma, newTh);
-        cost <- crossprod(yy - y.hat);
+        cost <- crossprod(lm.fit(cbind(xxL, xxH * G(z, newGamma, newTh)), yy)$residuals)
 
         if(cost <= bestCost) {
           bestCost <- cost;
           gamma <- newGamma;
           th <- newTh;
-          phi1 <- new_phi1
-          phi2 <- new_phi2
+#           phi1 <- new_phi1
+#           phi2 <- new_phi2
         }
       }
     }
@@ -133,14 +127,22 @@ lstar <- function(x, m, d=1, steps=d, series, mL, mH, mTh, thDelay,
           "; SSE = ", bestCost, "\n");
     }
   }
-  
+
+  # Fix the linear parameters one more time
+#   new_phi<- lm.fit(cbind(xxL, xxH * transFun(z, gamma, th)), yy)$coefficients
+#   phi1 <- new_phi[1:(mL+1)]
+#   phi2 <- new_phi[(mL+2):(mL + mH + 2)]
+
   # Computes the gradient 
   #
   # Returns the gradient with respect to the error
-  gradEhat <- function(p, phi1, phi2)
+  gradEhat <- function(p)
     {
       gamma <- p[1]  #Extract parms from vector p
-      th          <- p[2] 	     #Extract parms from vector p
+      th    <- p[2] 	     #Extract parms from vector p
+      new_phi<- lm.fit(cbind(xxL, xxH * G(z, gamma, th)), yy)$coefficients
+      phi1 <- new_phi[1:(mL+1)]
+      phi2 <- new_phi[(mL+2):(mL + mH + 2)]
 
       y.hat <- F(phi1, phi2, gamma, th)
       e.hat <- yy - y.hat
@@ -159,7 +161,7 @@ lstar <- function(x, m, d=1, steps=d, series, mL, mH, mTh, thDelay,
   
   #Sum of squares function
   #p: vector of parameters
-  SS <- function(p, phi1, phi2) {
+  SS <- function(p) {
     gamma <- p[1]   #Extract parms from vector p
     th <- p[2]      #Extract parms from vector p
 
@@ -169,20 +171,12 @@ lstar <- function(x, m, d=1, steps=d, series, mL, mH, mTh, thDelay,
       message('lstar: missing value during computations')
       return (Inf)
     }
-    tmp <- lm.fit(xx, yy)$coefficients
-
-    new_phi1 <- tmp[1:(mL+1)]
-    new_phi2 <- tmp[(mL+2):(mL+mH+2)]
-    
-    # Now compute the cost / sum of squares
-    y.hat <- F(new_phi1, new_phi2, gamma, th)
-    crossprod(yy - y.hat)
+    crossprod(lm.fit(xx, yy)$residuals)
   }
  
   #Numerical minimization##########
   p <- c(gamma, th)   #pack parameters in one vector
-  res <- optim(p, SS, gradEhat, hessian = TRUE, method="BFGS",
-               control = control, phi1 = phi1, phi2 = phi2)
+  res <- optim(p, SS, gradEhat, hessian = TRUE, method="BFGS", control = control)
 
   if(trace)
     if(res$convergence!=0)
@@ -285,7 +279,7 @@ summary.lstar <- function(object, ...) {
   
   #Non-linearity test############
   xx <- object$str$xx
-  sX <- object$mod$thVar
+  sX <- object$model.specific$thVar
   dim(sX) <- NULL
   xx1<- xx*sX		#predictors set B (approximated non-linear component)
   yy <- object$str$yy
@@ -297,13 +291,13 @@ summary.lstar <- function(object, ...) {
   
 ###############################
 
-  order.L <- object$mod$mL
-  order.H <- object$mod$mH
+  order.L <- object$model.specific$mL
+  order.H <- object$model.specific$mH
   ans$lowCoef <- object$coef[1:(order.L+1)]
   ans$highCoef<- object$coef[(order.L+1)+1:(order.H+1)]
   ans$thCoef <- object$coef[order.L+order.H+3]
-  ans$externThVar <- object$mod$externThVar
-  ans$mTh <- object$mod$mTh
+  ans$externThVar <- object$model.specific$externThVar
+  ans$mTh <- object$model.specific$mTh
   return(extend(summary.nlar(object), "summary.lstar", listV=ans))
 }
 
@@ -339,7 +333,7 @@ plot.lstar <- function(x, ask=interactive(), legend=FALSE,
   xx <- str$xx
   yy <- str$yy
   nms <- colnames(xx)
-  z <- x$mod$thVar
+  z <- x$model.specific$thVar
   z <- plogis(z, x$coefficients["th"], 1/x$coefficients["gamma"])
   regime.id <- cut(z, breaks=quantile(z, 0:5/5), include.lowest=TRUE)
   regime.id <- as.numeric(regime.id)
@@ -355,7 +349,7 @@ plot.lstar <- function(x, ask=interactive(), legend=FALSE,
   for(j in 1:x$str$m) {
     plot(xx[,j], yy, xlab=nms[j], ylab=paste("lag",x$str$steps),
          col=palette[regime.id], pch=pch, cex=cex, ...)
-    lines.default(xx[,j], x$mod$fitted, lty=2)
+    lines.default(xx[,j], x$model.specific$fitted, lty=2)
     if(legend) {
       labels <- c("[0;0.2]","(0.2,0.4]","(0.4;0.6]","(0.6;0.8]","(0.8;1]")
       legend("topleft", legend=labels, pch=sort(unique(regime.id)),
